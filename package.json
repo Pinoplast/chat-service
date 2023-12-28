@@ -1,0 +1,20 @@
+{
+  "name": "chat-service",
+  "version": "1.0.0",
+  "description": "This project demonstrates an integration between RabbitMQ, a message broker, and OpenAI's ChatGPT API, allowing communication with an AI-powered chatbot through a message queue.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "axios": "^1.6.3",
+    "buffer": "^6.0.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5"
+  }
+}
