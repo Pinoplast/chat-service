@@ -78,13 +78,13 @@ The application expects messages in the input queue to be JSON objects with the 
     "stream": <Stream (e.g., false)>
   }
 }
+```json
 
 4. Retrieve the response from the `OUTPUT_QUEUE_NAME` queue and handle it as needed.
 
 The `Choice` object has the following structure:
 
 ```json
-
 {
    data: {
       "finish_reason": "<Finish Reason (e.g., 'stop', 'length', 'tool_calls', 'content_filter', 'function_call')>",
@@ -99,6 +99,8 @@ The `Choice` object has the following structure:
       }
    }
 }
+```json
+
 ## Troubleshooting
 
 If you encounter any issues with the RabbitMQ ChatGPT integration, try the following troubleshooting steps:
