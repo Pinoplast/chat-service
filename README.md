@@ -78,7 +78,7 @@ The application expects messages in the input queue to be JSON objects with the 
     "stream": <Stream (e.g., false)>
   }
 }
-```json
+```
 
 4. Retrieve the response from the `OUTPUT_QUEUE_NAME` queue and handle it as needed.
 
@@ -99,7 +99,7 @@ The `Choice` object has the following structure:
       }
    }
 }
-```json
+```
 
 ## Troubleshooting
 
