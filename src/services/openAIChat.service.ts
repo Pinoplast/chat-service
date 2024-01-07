@@ -1,27 +1,23 @@
 // Manages communication with OpenAI's ChatGPT API
 
-import axios from 'axios';
-import { openAIConfig } from '../config';
+import OpenAI from "openai";
+import { ChatMessageParams } from '../interfaces.js';
 
-export async function communicateWithChatGPT(message: string): Promise<string> {
+export async function communicateWithChatGPT(openAiToken: string, chatParams: ChatMessageParams): Promise<OpenAI.Chat.ChatCompletion> {
   try {
-    const response = await axios.post(
-      openAIConfig.apiUrl,
-      {
-        prompt: message,
-        max_tokens: 50,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${openAIConfig.apiKey}`,
-        },
-      }
-    );
-
-    return response.data.choices[0].text.trim();
+    return await request(openAiToken, chatParams);
   } catch (error) {
     console.error('Error communicating with ChatGPT:', error);
     throw error;
   }
+}
+
+async function request(openAiToken: string, chatParams: ChatMessageParams) {
+  const openAi = new OpenAI({
+    apiKey: openAiToken
+  });
+
+  const chatCompletion: OpenAI.Chat.ChatCompletion = await openAi.chat.completions.create({...chatParams, stream: false});
+
+  return chatCompletion;
 }

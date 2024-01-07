@@ -1,8 +1,9 @@
 // Handles RabbitMQ connections and messaging
 
 import amqp from 'amqplib';
-import { rabbitMQConfig } from '../config';
-import { Buffer } from 'buffer';
+import { rabbitMQConfig } from '../config/index.js';
+import OpenAI from 'openai';
+import { ChatMessageParams } from '../interfaces.js';
 
 export async function createConnection() {
   try {
@@ -14,16 +15,22 @@ export async function createConnection() {
   }
 }
 
-export async function consumeMessages(handleMessage: (message: string) => void) {
+export async function consumeMessages(handleMessage: (openAiToken: string, chatParams: ChatMessageParams) => Promise<boolean>) {
   try {
     const connection = await createConnection();
     const channel = await connection.createChannel();
-    await channel.assertQueue(rabbitMQConfig.inputQueue);
-    channel.consume(rabbitMQConfig.inputQueue, (msg) => {
+    channel.consume(rabbitMQConfig.inputQueue, async (msg) => {
       if (msg !== null) {
-        const messageContent = msg.content.toString();
-        handleMessage(messageContent);
-        channel.ack(msg);
+        const messageContent = JSON.parse(msg.content.toString());
+        const responseObj = JSON.parse(messageContent.data);
+        const { openAiToken, chatMessageParams }: {openAiToken: string, chatMessageParams: ChatMessageParams} = responseObj;
+        
+        const success: boolean = await handleMessage(openAiToken, chatMessageParams);
+        console.log('Message processed:', success);
+        
+        if(success) {
+          channel.ack(msg);
+        }
       }
     });
   } catch (error) {
@@ -32,12 +39,13 @@ export async function consumeMessages(handleMessage: (message: string) => void) 
   }
 }
 
-export function sendMessageToOutputQueue(message: string) {
+export function sendMessageToOutputQueue(chatCompletion: OpenAI.Chat.ChatCompletion) {
   try {
+    const response = JSON.stringify( { data: chatCompletion.choices } );
     amqp.connect(rabbitMQConfig.connectionString).then((connection) => {
       connection.createChannel().then((channel) => {
         channel.assertQueue(rabbitMQConfig.outputQueue);
-        channel.sendToQueue(rabbitMQConfig.outputQueue, Buffer.from(message));
+        channel.sendToQueue(rabbitMQConfig.outputQueue, Buffer.from(response));
       });
     });
   } catch (error) {

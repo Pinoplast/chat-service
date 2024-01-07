@@ -9,8 +9,3 @@ export const rabbitMQConfig = {
   inputQueue: process.env.INPUT_QUEUE_NAME!,
   outputQueue: process.env.OUTPUT_QUEUE_NAME!,
 };
-
-export const openAIConfig = {
-  apiKey: process.env.OPENAI_API_KEY!,
-  apiUrl: 'https://api.openai.com/v1/engines/davinci/completions',
-};
